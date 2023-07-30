@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>Prueba de correos</title>
+  </head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    #suggestions {
+      position: absolute;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border: 1px solid #ccc;
+      max-height: 200px;
+      overflow-y: auto;
+      background-color: white;
+      z-index: 1;
+    }
+    #suggestions li {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    #suggestions li:hover,
+    #suggestions li:focus {
+      background-color: #e1e1e1;
+    }
+    #email-input {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      border: 1px solid #ccc;
+      padding: 5px;
+    }
+    #email-input input {
+      border: none;
+      outline: none;
+    }
+    .email-tag {
+      display: flex;
+      align-items: center;
+      background-color: #e1e1e1;
+      padding: 5px;
+      margin-right: 5px;
+      margin-bottom: 5px;
+      border-radius: 3px;
+    }
+    .email-tag button {
+      margin-left: 5px;
+      background-color: transparent;
+      border: none;
+      outline: none;
+      cursor: pointer;
+    }
+  </style>
+  <body>
+    <div class="right-side">
+      <div class="div_title">
+        <h1>Autocompletar correos gmail</h1>
+      </div>
+      <input type="text" placeholder="Asunto">
+      <input type="date" placeholder="Fecha">
+      <input type="time" placeholder="Hora">
+      
+        <div id="email-input" onclick="focusEmailInput()">
+          <input type="email" id="email" oninput="handleEmailInput(event)" style="width: auto;">
+        </div>
+      
+        <ul id="suggestions"></ul>
+    </div>
+    <button onclick="sendEmail()">Enviar correo</button>
+    <script>
+        const emails = JSON.parse('<%- JSON.stringify(emails) %>');
+        
+        function handleEmailInput(event) {
+            const input = event.target.value.split(',').pop().trim();
+            let suggestions = [];
+            if (input !== '') {
+                suggestions = emails.filter(email => email.toLowerCase().includes(input.toLowerCase())).slice(0, 1);
+            }
+            const suggestionsList = document.querySelector('#suggestions');
+            suggestionsList.innerHTML = '';
+            suggestions.forEach(email => {
+                const suggestion = document.createElement('li');
+                suggestion.textContent = email;
+                suggestion.addEventListener('click', handleSuggestionClick);
+                suggestionsList.appendChild(suggestion);
+            });
+        }
+
+        function handleSuggestionClick(event) {
+            const suggestion = event.target.textContent + ' ';
+            const emailInput = document.querySelector('#email');
+            emailInput.value = '';
+            addEmailTag(suggestion);
+            document.querySelector('#suggestions').innerHTML = '';
+        }
+
+        function addEmailTag(email) {
+            const emailInput = document.querySelector('#email-input');
+            const emailTag = document.createElement('div');
+            emailTag.className = 'email-tag';
+            emailTag.textContent = email;
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'x';
+            deleteButton.addEventListener('click', () => deleteEmailTag(emailTag));
+            
+            emailTag.appendChild(deleteButton);
+            
+            emailInput.insertBefore(emailTag, emailInput.lastElementChild);
+        }
+
+        function deleteEmailTag(emailTag) {
+            emailTag.remove();
+        }
+
+        function focusEmailInput() {
+          document.querySelector('#email').focus();
+        }
+
+        function sendEmail() {
+  const subject = document.querySelector('input[placeholder="Asunto"]').value;
+  const date = document.querySelector('input[placeholder="Fecha"]').value;
+  const time = document.querySelector('input[placeholder="Hora"]').value;
+
+  let allEmailsFilled = true;
+
+  const emailsTags = Array.from(document.querySelectorAll('.email-tag'));
+  const emails = emailsTags.map(tag => tag.firstChild.textContent.trim());
+
+  if (!subject || !date || !time || emails.includes('')) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error en la petición',
+      text: 'Hay algunos campos vacíos'
+    });
+    return;
+  }
+
+  fetch('/send_email', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ subject, date, time, guests: emails }) // Cambio de 'emails' a 'guests'
+  })
+    .then(response => {
+      if (response.ok) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Enviado',
+          text: 'Se envió el correo a los invitados correctamente'
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un error al enviar las invitaciones'
+        });
+      }
+    });
+}
+    </script>
+  </body>
+</html>

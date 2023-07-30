@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autorizacion del Sistema de Gestion de Minutas</title>
+  <link rel="stylesheet" href="/css/estilo-dashboard.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="left-side">
+      <div class="hide_options_pdf">
+        <img src="/img/Logo UJED.png" alt="">
+      </div>
+      <div class="pdf_viewer">
+        <iframe src="../pdf/archivo-64bc395f01be4c6519da51db.pdf" type="application/pdf" width="100%" height="100%">
+          <p>El archivo PDF no se puede mostrar. Puedes descargarlo <a
+              href="../pdf/archivo-64bc395f01be4c6519da51db.pdf">aquí</a>.</p>
+        </iframe>
+      </div>
+    </div>
+    <div class="right-side">
+      <div class="div_title">
+        <h1>Autorizacion del Sistema <span>de Gestion de Minutas</span></h1>
+      </div>
+      <div class="div_information">
+        <h2 class="text_information">La firma electrónica que se aplicará en el documento posee el mismo valor legal que
+          una firma manuscrita, garantizando la autenticidad e integridad del contenido. Esto significa que tu
+          consentimiento es esencial para proceder con la firma del PDF adjunto. <br><br> Al proporcionar tu
+          consentimiento, autorizas utilizar tu firma electrónica para representarte en el documento mencionado.
+          <br><br> Si estás de acuerdo con esta solicitud y deseas que se proceda con la firma electrónica del
+          documento, por favor dale clic al boton de <span class="text_sub">FIRMAR</span>
+        </h2>
+      </div>
+      <div id="myModal" class="modalmask">
+        <div class="modalbox">
+          <div class="modal-header">
+            <button onclick="closeModal()" class="close">X</button>
+            <h2>Confirmación de firma</h2>
+          </div>
+          <div class="modal-content">
+            <p>Ingresa tu Matrícula y Rfc:</p>
+            <div class="input-log">
+              <input type="text" id="matriculaInput" placeholder="Matrícula">
+            </div>
+            <div class="input-log">
+              <input type="text" id="rfcInput" placeholder="RFC">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div class="modal-buttons">
+              <button type="button" class="button-confirm" onclick="confirmSignature()">Confirmar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button type="submit" onclick="openModal()" class="openModal">Firmar</button>
+    </div>
+  </div>
+  <script src="/js/modal_post.js"></script>
+</body>
+
+</html>
